@@ -136,7 +136,7 @@ class HDF5VLADataset:
             dir_path = os.path.dirname(file_path)
             with open(os.path.join(dir_path, 'expanded_instruction_gpt-4-turbo.json'), 'r') as f_instr:
                 instruction_dict = json.load(f_instr)
-            # We have 1/3 prob to use original instruction,
+            # We have 1/3 prob to use original instruction, 
             # 1/3 to use simplified instruction,
             # and 1/3 to use expanded instruction.
             instruction_type = np.random.choice([
@@ -278,7 +278,7 @@ class HDF5VLADataset:
                 first_idx = indices[0]
             else:
                 raise ValueError("Found no qpos that exceeds the threshold.")
-            
+            # 需要修改
             # Rescale gripper to [0, 1]
             qpos = qpos / np.array(
                [[1, 1, 1, 1, 1, 1, 4.7908, 1, 1, 1, 1, 1, 1, 4.7888]] 

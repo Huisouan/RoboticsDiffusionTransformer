@@ -26,15 +26,25 @@ with open('configs/base.yaml', 'r') as file:
 def assemble_state_vec(arm_concat: tf.Tensor, arm_format: str,
                        base_concat=None, base_format=None) -> tf.Tensor:
     """
-    Assemble the state/action vector from the arm and base.
+    根据机械臂和基座数据组装状态/动作向量
+
+    Args:
+        arm_concat: 机械臂状态数据的拼接张量
+        arm_format: 用逗号分隔的字符串，描述arm_concat各元素对应的字段名称
+        base_concat: 可选参数，基座状态数据的拼接张量
+        base_format: 可选参数，用逗号分隔的字符串，描述base_concat各元素对应的字段名称
+
+    Returns:
+        一个包含两个张量的元组：
+            state_vec: 根据格式规范组装好的状态向量
+            mask_vec: 二进制掩码张量（有效元素为1，未使用位置为0）
     """
     state_vec = tf.zeros(STATE_VEC_LEN, dtype=tf.float32)
     mask_vec = tf.zeros(STATE_VEC_LEN, dtype=tf.float32)
 
-    # Assemble the arm state
+    # 通过字段名称到预定义索引的映射组装机械臂状态
     arm_concat = tf.cast(arm_concat, tf.float32)
     arm_format = arm_format.split(',')
-    # Use the scatter_nd to avoid the duplicate indices
     state_vec = tf.tensor_scatter_nd_update(
         state_vec, 
         [[STATE_VEC_IDX_MAPPING[name]] for name in arm_format],
@@ -46,7 +56,7 @@ def assemble_state_vec(arm_concat: tf.Tensor, arm_format: str,
         tf.ones(len(arm_format), dtype=tf.float32)
     )
 
-    # Assemble the base state if exists
+    # 若存在基座数据则进行状态合并
     if base_concat is not None:
         base_concat = tf.cast(base_concat, tf.float32)
         base_format = base_format.split(',')
